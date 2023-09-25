@@ -1,6 +1,7 @@
-FROM croncorp/python-ffmpeg
+FROM croncorp/python-ffmpeg:latest
 ADD . /app
 WORKDIR /app
+
 
 RUN pip install -f requirements.txt
 
