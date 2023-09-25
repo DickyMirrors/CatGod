@@ -1,2 +1,10 @@
 python-ffmpeg
 pysubs2
+morse-audio-decoder
+moviepy
+opencv-python
+numpy
+simpleaudio #https://stackoverflow.com/a/58251257
+matplotlib
+scipy
+pandas
