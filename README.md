@@ -23,10 +23,15 @@ Tooling for making 'Cat God' video
 * simpleaudio 
   * https://stackoverflow.com/a/58251257
 * matplotlib
+  * https://pypi.org/project/matplotlib/
 * scipy
+  * https://pypi.org/project/scipy
 * pandas
+  * https://pypi.org/project/pandas
 * opencv-python
+  * https://pypi.org/project/opencv-python
 * numpy
+  * https://pypi.org/project/numpy
 
 # What Does This Do?
 This will take subtitles formatted in `.srt` and convert them into quantized morse code to concatonate video in time of dots, dashes, and rests for compositing.
