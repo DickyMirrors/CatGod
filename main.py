@@ -1,6 +1,7 @@
 import pysubs2
 from morse import encrypt, decrypt
 import ffmpeg
+from morse_audio_decoder.morse import MorseCode
 
 # pysub2 for transcript parsing
 # https://pysubs2.readthedocs.io/en/latest/index.html
@@ -33,6 +34,12 @@ def video_stitch():
       .output(joined[0], joined[1], 'out.mp4')
       .run()
   )
+
+# morse-audio-decoder
+# https://pypi.org/project/morse-audio-decoder/
+morse_code = MorseCode.from_wavfile("/path/to/file.wav")
+out = morse_code.decode()
+print(out)
   
 # Text morse code converter
 # https://www.geeksforgeeks.org/morse-code-translator-python/

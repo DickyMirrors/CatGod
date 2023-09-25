@@ -85,6 +85,12 @@ def decrypt(message):
 
 	return decipher
 
+
+
+morse_code = MorseCode.from_wavfile("/path/to/file.wav")
+out = morse_code.decode()
+print(out)
+
 # Hard-coded driver function to run the program
 def main():
 	message = "GEEKS-FOR-GEEKS"

@@ -1,3 +1,5 @@
 python-ffmpeg
 pysubs2
 morse-audio-decoder
+moviepy
+opencv-python
