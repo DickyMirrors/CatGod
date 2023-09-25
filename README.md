@@ -15,7 +15,18 @@ Tooling for making 'Cat God' video
 * pysubs2
   * https://pysubs2.readthedocs.io/en/latest/index.html
 * python-ffmpeg
+  * https://pypi.org/project/ffmpeg-python/
 * morse-audio-decoder
+  * https://pypi.org/project/morse-audio-decoder/
+* moviepy
+ * https://zulko.github.io/moviepy/
+* simpleaudio 
+  * https://stackoverflow.com/a/58251257
+* matplotlib
+* scipy
+* pandas
+* opencv-python
+* numpy
 
 # What Does This Do?
 This will take subtitles formatted in `.srt` and convert them into quantized morse code to concatonate video in time of dots, dashes, and rests for compositing.
@@ -38,7 +49,7 @@ https://stackoverflow.com/questions/9913032/how-can-i-extract-audio-from-video-w
 ffmpeg -i input.mp4 -map 0:a output.mp3
 ffmpeg -i input.mkv -map 0:a output.m4a
 ffmpeg -i input.avi -map 0:a -c:a aac output.mka
-ffmpeg -i input.mp4 output.wav
+ffmpeg -i input.mp4 -ac1 output.wav
 ```
 ## Stero to Mono
 https://stackoverflow.com/a/51494497
