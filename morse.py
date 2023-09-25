@@ -1,4 +1,73 @@
-# Python program to implement Morse Code Translator
+import pysubs2
+import time
+import numpy as np
+import simpleaudio as sa
+import ffmpeg
+import shutil
+import urllib.request
+
+import numpy as np
+import scipy.io
+import scipy.fft
+import scipy.signal
+import matplotlib.pyplot as plt
+
+rip = True
+play = True
+
+leading = 0.001
+spacing = 0.01
+
+dot = 0.025
+dot_freq = 500
+dash = 0.05
+dash_freq = dot_freq-25
+
+morse_subtitles_file = "build/CatGod.ass"
+rapgod_subtitles_file = "./src/rapgod/Meowminem-CatGod.srt"
+
+def proccess():
+	wav_path = "src/vocals.wav"	
+	with urllib.request.urlopen(message_url) as response, open(wav_path, "wb") as local_file:
+	    shutil.copyfileobj(response, local_file)	
+	samplerate, data = scipy.io.wavfile.read(wave_path)	
+	time = np.arange(len(data)) / samplerate	
+	yf = 2.0 / len(data) * np.abs(scipy.fft.fft(data)[:len(data)//2])
+	xf = scipy.fft.fftfreq(len(data), 1/samplerate)[:len(data)//2]	
+	return {
+	  "time":time, 
+	  "samplerate":samplerate, 
+	  "data":data,
+	  "xf":xf,
+	  "yf":yf, 
+	}	
+
+def sound(x,z):
+	frequency = x # Our played note will be 440 Hz
+	fs = 44100  # 44100 samples per second
+	seconds = z  # Note duration of 3 seconds	
+
+	# Generate array with seconds*sample_rate steps, ranging between 0 and seconds
+	t = np.linspace(0, seconds, int(seconds * fs), False)	
+	#t = np.arange(0, 0.2, 0.2 * fs)	
+	
+	# Generate a 440 Hz sine wave
+	note = np.sin(frequency * t * 2 * np.pi)
+	
+	# Ensure that highest value is in 16-bit range
+	audio = note * (2**15 - 1) / np.max(np.abs(note))
+
+	# Convert to 16-bit data
+	audio = audio.astype(np.int16)	
+	
+	if play:
+		# Start playback
+		play_obj = sa.play_buffer(audio, 1, 2, fs)	
+
+		# Wait for playback to finish before exiting
+		play_obj.wait_done()
+
+	return audio
 
 '''
 VARIABLE KEY
@@ -22,85 +91,80 @@ MORSE_CODE_DICT = { 'A':'.-', 'B':'-...',
 					'1':'.----', '2':'..---', '3':'...--',
 					'4':'....-', '5':'.....', '6':'-....',
 					'7':'--...', '8':'---..', '9':'----.',
-					'0':'-----', ', ':'--..--', '.':'.-.-.-',
+					'0':'-----', ',':'--..--', '.':'.-.-.-',
 					'?':'..--..', '/':'-..-.', '-':'-....-',
-					'(':'-.--.', ')':'-.--.-'}
+					'(':'-.--.', ')':'-.--.-', '"':'.-..-.',
+					"'": '.----.', '\\': '\n', '!':'-·-·--',
+					'♪':'♪'}
 
-# Function to encrypt the string
-# according to the morse code chart
 def encrypt(message):
 	cipher = ''
 	for letter in message:
 		if letter != ' ':
-
-			# Looks up the dictionary and adds the
-			# corresponding morse code
-			# along with a space to separate
-			# morse codes for different characters
 			cipher += MORSE_CODE_DICT[letter] + ' '
 		else:
-			# 1 space indicates different characters
-			# and 2 indicates different words
 			cipher += ' '
-
 	return cipher
 
-# Function to decrypt the string
-# from morse to english
 def decrypt(message):
-
-	# extra space added at the end to access the
-	# last morse code
 	message += ' '
-
 	decipher = ''
 	citext = ''
 	for letter in message:
-
-		# checks for space
 		if (letter != ' '):
-
-			# counter to keep track of space
 			i = 0
-
-			# storing morse code of a single character
 			citext += letter
-
-		# in case of space
 		else:
-			# if i = 1 that indicates a new character
 			i += 1
-
-			# if i = 2 that indicates a new word
 			if i == 2 :
-
-				# adding space to separate words
 				decipher += ' '
 			else:
-
-				# accessing the keys using their values (reverse of encryption)
 				decipher += list(MORSE_CODE_DICT.keys())[list(MORSE_CODE_DICT
 				.values()).index(citext)]
 				citext = ''
 
 	return decipher
 
+def play_dot():
+    return sound(dot_freq,dot)
 
+def play_dash():
+    return sound(dash_freq,dash) 
 
-morse_code = MorseCode.from_wavfile("/path/to/file.wav")
-out = morse_code.decode()
-print(out)
+def play_char(ch):
+	if ch == ' ':
+		time.sleep(spacing)
+		return spacing
 
-# Hard-coded driver function to run the program
+	morseval = MORSE_CODE_DICT[ch]
+	morse = []
+	for d in morseval:
+		if d == '.':
+			morse.append(play_dot())
+			time.sleep(leading)
+		else:
+			morse.append(play_dash())
+			time.sleep(leading)
+	return morse, leading
+	
+def txt2morse(txt):
+	print(txt)
+	for ch in txt.upper():    
+		play_char(ch),  
+
 def main():
-	message = "GEEKS-FOR-GEEKS"
-	result = encrypt(message.upper())
-	print (result)
+	#import pdb; pdb.set_trace()
+	if rip:
+		subs = pysubs2.load(rapgod_subtitles_file, encoding="utf-8")
+		for line in subs:
+			txt = encrypt(line.text.upper())
+			line.text = "{\\be1}" + txt
+		subs.save(morse_subtitles_file)
 
-	message = "--. . . -.- ... -....- ..-. --- .-. -....- --. . . -.- ... "
-	result = decrypt(message)
-	print (result)
+	subs = pysubs2.load(morse_subtitles_file, encoding="utf-8")
+	for line in subs:
+		txt = decrypt(line.text.strip('♪').strip().strip("{\\be1}"))
+		txt2morse(txt.strip('♪ '))
 
-# Executes the main function
 if __name__ == '__main__':
 	main()

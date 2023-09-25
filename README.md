@@ -13,6 +13,7 @@ Tooling for making 'Cat God' video
 * morse-audio-decoder
   * https://pypi.org/project/morse-audio-decoder/
 * pysubs2
+  * https://pysubs2.readthedocs.io/en/latest/index.html
 * python-ffmpeg
 * morse-audio-decoder
 
@@ -39,3 +40,6 @@ ffmpeg -i input.mkv -map 0:a output.m4a
 ffmpeg -i input.avi -map 0:a -c:a aac output.mka
 ffmpeg -i input.mp4 output.wav
 ```
+## Stero to Mono
+https://stackoverflow.com/a/51494497
+`ffmpeg -i stereo.flac -ac 1 mono.flac`
